@@ -132,3 +132,4 @@ dmypy.json
 # Build
 /dist
 /build
+.DS_Store
