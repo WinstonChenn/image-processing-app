@@ -1,0 +1,15 @@
+name: ee440prod
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy=1.21.2=py39h7eed0ac_0
+  - opencv=4.5.3=py39h6e9494a_3
+  - pillow=8.3.1=py39ha4cf6ea_0
+  - py-opencv=4.5.3=py39h71a6800_3
+  - py2app=0.26.1=py39h89e85a6_1
+  - python=3.9.7=h1248fe1_3_cpython
+  - python-dateutil=2.8.2=pyhd8ed1ab_0
+  - python_abi=3.9=2_cp39
+  - tk=8.6.11=h5dbffcc_1
+prefix: /Users/winston/miniconda3/envs/ee440
