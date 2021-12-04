@@ -9,15 +9,24 @@ def blur_image(self, k):
     self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
     self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
 
-def bilateral_smooth_image(self, d=5, sigma=None):
+def bilateral_smooth_image(self, d=5, sigma=None, recursion_level=None):
     # if d is None:
     #     d = self.scl_smooth_.get()
     if sigma is None:
         sigma = self.scl_smooth_sigma.get()
-    d, sigma = int(d), int(sigma)
-    self.NEWcv_img_modify = cv2.bilateralFilter(self.NEWcv_img, d, sigma, sigma)
-    self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
-    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
+    if recursion_level is None:
+        recursion_level = self.scl_recursion_level.get()
+
+    d, sigma, recursion_level = int(d), int(sigma), int(recursion_level)
+
+    self.NEWcv_img = self.cv_img.copy()
+    for i in range(recursion_level):
+        self.NEWcv_img = cv2.bilateralFilter(self.NEWcv_img, d, sigma, sigma)
+    self.NEWcv_img_modify = self.NEWcv_img
+    self.photo = PIL.ImageTk.PhotoImage(PIL.Image.fromarray(self.NEWcv_img_modify))
+    self.canvas1.create_image(
+        MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER
+    )
 
 def sobel_edge_detection(self, type=None, ksize=None):
     if type is None:

@@ -32,14 +32,24 @@ def setup_bilateral_smooth_control_widegts(self):
     # self.scl_smooth_d.place(relx=0.25, rely=0.0, relwidth=0.5, relheight=0.3)
     # self.control_widgets_arr.append(self.scl_smooth_d)
     self.scl_smooth_sigma = tk.Scale(
-        self.frame3, from_=1, to=1000, orient=tk.HORIZONTAL, showvalue=1,
+        self.frame3, from_=1, to=50, orient=tk.HORIZONTAL, showvalue=1,
         command=lambda sigma: self.bilateral_smooth_image(sigma=sigma), 
         length=400, sliderlength=20, label="Sigma Space", font="Tahoma 16",
         troughcolor=BG_COLOR, bg=BG_COLOR, fg='white', trough="white", 
         highlightthickness=0,
     )
-    self.scl_smooth_sigma.place(relx=0.25, rely=0.3, relwidth=0.5, relheight=0.3)
+    self.scl_smooth_sigma.place(relx=0.25, rely=0.1, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_smooth_sigma)
+
+    self.scl_recursion_level = tk.Scale(
+        self.frame3, from_=1, to=100, orient=tk.HORIZONTAL, showvalue=1,
+        command=lambda level: self.bilateral_smooth_image(recursion_level=level), 
+        length=400, sliderlength=20, label="Recursion Level", font="Tahoma 16",
+        troughcolor=BG_COLOR, bg=BG_COLOR, fg='white', trough="white", 
+        highlightthickness=0,
+    )
+    self.scl_recursion_level.place(relx=0.25, rely=0.5, relwidth=0.5, relheight=0.3)
+    self.control_widgets_arr.append(self.scl_recursion_level)
 
     self.bilateral_smooth_image()
 
@@ -111,6 +121,7 @@ def setup_canny_control_widgets(self):
         self.frame3, text="Kernel Size", font="Tahoma 16", bg=BG_COLOR, fg='white'
     )
     self.ksize_label.place(relx=0.25, rely=0.6, relwidth=0.1, relheight=0.1)
+    self.control_widgets_arr.append(self.ksize_label)
     self.edge_ksize_sel = tk.IntVar()
     self.edge_ksize_sel.set(3)
     self.ksize3_radiobutton = tk.Radiobutton(
