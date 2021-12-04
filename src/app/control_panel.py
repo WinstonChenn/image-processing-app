@@ -65,7 +65,7 @@ def setup_gradient_control_widgets(self):
     self.sel_edge_type.place(relx=0.25, rely=0.2, relwidth=0.1)
     self.control_widgets_arr.append(self.sel_edge_type)
 
-    def odd_fix(self, n):
+    def odd_fix(n):
         if not hasattr(self, "_past"):
             self._past = 0
         n = int(n)
@@ -146,3 +146,16 @@ def setup_canny_control_widgets(self):
     self.ksize7_radiobutton.place(relx=0.45, rely=0.7, relwidth=0.1)
     self.control_widgets_arr.append(self.ksize7_radiobutton)
     self.canny_edge_detection()
+
+
+def setup_quantization_widgets(self):
+    self.clear_widgets()
+    self.scl_n_clusters = tk.Scale(
+        self.frame3, from_=2, to=16, orient=tk.HORIZONTAL, showvalue=2,
+        command=self.quantization, length=400, sliderlength=20, 
+        label="Number of Clusters", font="Tahoma 16", troughcolor=BG_COLOR, 
+        bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
+    )
+    self.scl_n_clusters.place(relx=0.25, rely=0.0, relwidth=0.5, relheight=0.3)
+    self.control_widgets_arr.append(self.scl_n_clusters)
+    self.quantization()

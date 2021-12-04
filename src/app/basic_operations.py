@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import tkinter as tk
 import PIL
+from sklearn.cluster import MiniBatchKMeans
 from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY
 def blur_image(self, k):
     k = int(k)
@@ -55,5 +56,21 @@ def canny_edge_detection(self, threshould_low=None, threshould_high=None, ksize=
         self.NEWcv_img, threshold1=threshould_low, threshold2=threshould_high, 
         apertureSize=ksize
     )
+    self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
+    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
+
+
+def quantization(self, n_clusters=None):
+    if n_clusters is None:
+        n_clusters = self.scl_n_clusters.get()
+    n_clusters = int(n_clusters)
+    image = cv2.cvtColor(self.NEWcv_img, cv2.COLOR_RGB2LAB)
+    (h, w) = image.shape[:2]
+    image = image.reshape((h*w, 3))
+    clt = MiniBatchKMeans(n_clusters = n_clusters)
+    labels = clt.fit_predict(image)
+    quant = clt.cluster_centers_.astype("uint8")[labels]
+    quant = quant.reshape((h, w, 3))
+    self.NEWcv_img_modify = cv2.cvtColor(quant, cv2.COLOR_LAB2RGB)
     self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
     self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)

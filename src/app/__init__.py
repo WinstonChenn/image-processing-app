@@ -8,12 +8,14 @@ class App():
         setup_blur_control_widgets, \
         setup_bilateral_smooth_control_widegts, \
         setup_gradient_control_widgets, \
-        setup_canny_control_widgets
+        setup_canny_control_widgets, \
+        setup_quantization_widgets
     from .basic_operations import \
         blur_image, \
         bilateral_smooth_image, \
         sobel_edge_detection, \
-        canny_edge_detection
+        canny_edge_detection, \
+        quantization
     from .photo import setup_photo, \
         load_local_photo, \
         save_processed_photo, \
@@ -66,7 +68,7 @@ class App():
         self.dropDownSel.set("Select")
         self.dropDownSel.trace("w", self.dropDownSelCallback)
         self.dropDown = tk.OptionMenu(
-            self.frame3, self.dropDownSel, *["blur", "smooth", "gradient", "edge"]
+            self.frame3, self.dropDownSel, *["blur", "smooth", "gradient", "edge", "quantization"]
         )
         self.dropDown.config(fg="black", bg=BG_COLOR)
         self.dropDown.place(relx=0.05, rely=0.1, relwidth=0.08)
@@ -76,6 +78,7 @@ class App():
             "smooth": self.setup_bilateral_smooth_control_widegts,
             "gradient": self.setup_gradient_control_widgets,
             "edge": self.setup_canny_control_widgets,
+            "quantization": self.setup_quantization_widgets
         }
 
         self.photo_select_button_setup()
@@ -90,8 +93,8 @@ class App():
     def dropDownSelCallback(self, *args):
         effect_str = self.dropDownSel.get()
         if effect_str in self.effect_setup_funcs_dict:
-            self.effect_setup_funcs_dict[self.dropDownSel.get()]()
             self.setup_photo(self.image_path)
+            self.effect_setup_funcs_dict[self.dropDownSel.get()]()
 
     def edgeTypeSelCallback(self, *args):
         self.edge_type_sel_str = self.edge_type_sel.get()
