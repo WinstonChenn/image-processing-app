@@ -1,6 +1,6 @@
 import tkinter as tk
 import numpy as np
-from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY
+from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY, DROPDOWN_WIDTH
 
 class App():
     from .control_panel import \
@@ -73,7 +73,7 @@ class App():
             self.frame3, self.dropDownSel, *["blur", "smooth", "gradient", "edge", "quantization"]
         )
         self.dropDown.config(fg="black", bg=BG_COLOR)
-        self.dropDown.place(relx=0.05, rely=0.1, relwidth=0.08)
+        self.dropDown.place(relx=0.05, rely=0.1, relwidth=DROPDOWN_WIDTH)
         self.control_widgets_arr = []
         self.effect_setup_funcs_dict = {
             "blur": self.setup_blur_control_widgets,

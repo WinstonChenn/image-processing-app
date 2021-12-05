@@ -4,7 +4,7 @@ import PIL.ImageTk
 import numpy as np
 import tkinter.filedialog
 import tkinter as tk
-from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY
+from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY, DROPDOWN_WIDTH
 
 
 def photo_select_button_setup(self):
@@ -15,7 +15,7 @@ def photo_select_button_setup(self):
         fg='black', activeforeground="grey",
     )
     self.photoSelButton.place(
-        relx=0.047, rely=0.25, relwidth=0.085, relheight=0.11
+        relx=0.047, rely=0.25, relwidth=DROPDOWN_WIDTH, relheight=0.11
     )
 
 def photo_save_button_setup(self):
@@ -26,7 +26,7 @@ def photo_save_button_setup(self):
         fg='black', activeforeground="grey",
     )
     self.photoSaveButton.place(
-        relx=0.047, rely=0.4, relwidth=0.085, relheight=0.11
+        relx=0.047, rely=0.4, relwidth=DROPDOWN_WIDTH, relheight=0.11
     )
 
 def resize_photo(self, ori_photo):
