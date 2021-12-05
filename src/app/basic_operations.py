@@ -4,73 +4,129 @@ import tkinter as tk
 import PIL
 from sklearn.cluster import MiniBatchKMeans
 from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY
-def blur_image(self, k):
-    k = int(k)
-    self.NEWcv_img_modify = cv2.blur(self.NEWcv_img, (k, k))
-    self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
-    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
 
-def bilateral_smooth_image(self, d=5, sigma=None, recursion_level=None):
-    # if d is None:
-    #     d = self.scl_smooth_.get()
+def blur_image(self, k=None, image=None, return_image=False):
+    if k is None:
+        k = self.scl_blur.get()
+    k = int(k)
+    if image is None:
+        image = self.resized_ori_img
+    self.resized_mod_img = cv2.blur(image, (k, k))
+    if return_image:
+        return self.resized_mod_img
+    else:
+        self.tk_mod_img = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.resized_mod_img))
+        self.canvas1.create_image(
+            MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
+        )
+
+def bilateral_smooth_image(
+    self, d=5, sigma=None, recursion_level=None, image=None, return_image=False
+):
     if sigma is None:
         sigma = self.scl_smooth_sigma.get()
     if recursion_level is None:
         recursion_level = self.scl_recursion_level.get()
-
+    if image is None:
+        image = self.resized_ori_img
     d, sigma, recursion_level = int(d), int(sigma), int(recursion_level)
-
-    self.NEWcv_img = self.cv_img.copy()
+    self.resized_mod_img = image.copy()
     for i in range(recursion_level):
-        self.NEWcv_img = cv2.bilateralFilter(self.NEWcv_img, d, sigma, sigma)
-    self.NEWcv_img_modify = self.NEWcv_img
-    self.photo = PIL.ImageTk.PhotoImage(PIL.Image.fromarray(self.NEWcv_img_modify))
-    self.canvas1.create_image(
-        MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER
-    )
+        self.resized_mod_img = cv2.bilateralFilter(
+            self.resized_mod_img, d, sigma, sigma
+        )
+    if return_image:
+        return self.resized_mod_img
+    else:
+        self.tk_mod_img = PIL.ImageTk.PhotoImage(
+            PIL.Image.fromarray(self.resized_mod_img)
+        )
+        self.canvas1.create_image(
+            MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
+        )
 
-def sobel_edge_detection(self, type=None, ksize=None):
+def sobel_edge_detection(
+    self, type=None, ksize=None, image=None, return_image=False
+):
     if type is None:
         type = self.edge_type_sel.get()
     if ksize is None:
-        ksize = self.scl_edge_size.get()
+        ksize = int(self.scl_edge_size.get())
+    if image is None:
+        image = self.resized_ori_img
     if type == "x gradient":
-        self.NEWcv_img_modify = cv2.Sobel(self.NEWcv_img, cv2.CV_64F, dx=1, dy=0, ksize=ksize)
+        self.resized_mod_img = cv2.Sobel(
+            image, cv2.CV_64F, dx=1, dy=0, ksize=ksize
+        )
     elif type == "y gradient":
-        self.NEWcv_img_modify = cv2.Sobel(self.NEWcv_img, cv2.CV_64F, dx=0, dy=1, ksize=ksize)
+        self.resized_mod_img = cv2.Sobel(
+            image, cv2.CV_64F, dx=0, dy=1, ksize=ksize
+        )
     elif type == "xy gradient":
-        self.NEWcv_img_modify = cv2.Sobel(self.NEWcv_img, cv2.CV_64F, dx=1, dy=1, ksize=ksize)
-    self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify.astype(np.uint8)))
-    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
+        self.resized_mod_img = cv2.Sobel(
+            image, cv2.CV_64F, dx=1, dy=1, ksize=ksize
+        )
+    if return_image:
+        return self.resized_mod_img.astype(np.uint8)
+    else:
+        self.tk_mod_img = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.resized_mod_img.astype(np.uint8)))
+        self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER)
 
 
-def canny_edge_detection(self, threshould_low=None, threshould_high=None, ksize=None):
+def canny_edge_detection(
+    self, threshould_low=None, threshould_high=None, ksize=None,
+    image=None, return_image=False
+):
     if threshould_low is None:
         threshould_low = self.scl_edge_threshold_low.get()
     if threshould_high is None:
         threshould_high = self.scl_edge_threshold_high.get()
     if ksize is None:
         ksize = self.edge_ksize_sel.get()
+    if image is None:
+        image = self.resized_ori_img
+
     threshould_low, threshould_high, ksize = int(threshould_low), int(threshould_high), int(ksize)
-    self.NEWcv_img_modify = cv2.Canny(
-        self.NEWcv_img, threshold1=threshould_low, threshold2=threshould_high, 
+    self.resized_mod_img = cv2.Canny(
+        image, threshold1=threshould_low, threshold2=threshould_high, 
         apertureSize=ksize
     )
-    self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
-    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
+    if return_image:
+        return self.resized_mod_img
+    else:
+        self.tk_mod_photo = PIL.ImageTk.PhotoImage(
+            image = PIL.Image.fromarray(self.resized_mod_img)
+        )
+        self.canvas1.create_image(
+            MAXDIM//2, MAXDIM//2, image=self.tk_mod_photo, anchor=tk.CENTER
+        )
 
 
-def quantization(self, n_clusters=None):
+def quantization(
+    self, n_clusters=None, type=None, image=None, return_image=False
+):
     if n_clusters is None:
         n_clusters = self.scl_n_clusters.get()
+    if type is None:
+        type = self.quantization_type_sel.get()
+    if image is None:
+        image = self.resized_ori_img
+    assert type in ["color", "luminance"]
     n_clusters = int(n_clusters)
-    image = cv2.cvtColor(self.NEWcv_img, cv2.COLOR_RGB2LAB)
-    (h, w) = image.shape[:2]
-    image = image.reshape((h*w, 3))
     clt = MiniBatchKMeans(n_clusters = n_clusters)
-    labels = clt.fit_predict(image)
-    quant = clt.cluster_centers_.astype("uint8")[labels]
-    quant = quant.reshape((h, w, 3))
-    self.NEWcv_img_modify = cv2.cvtColor(quant, cv2.COLOR_LAB2RGB)
-    self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.NEWcv_img_modify))
-    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.photo, anchor=tk.CENTER)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+    (h, w) = image.shape[:2]
+    if type == "color":
+        labels = clt.fit_predict(image.reshape((w * h, 3)))
+        quant = clt.cluster_centers_.astype("uint8")[labels].reshape((h, w, 3))
+    elif type == "luminance":
+        labels = clt.fit_predict(image[:,:,0].reshape((w * h, 1)))
+        quant = image
+        quant[:, :, 0:1] = clt.cluster_centers_.astype("uint8")[labels].reshape((h, w, 1))
+    quant = cv2.cvtColor(quant, cv2.COLOR_LAB2RGB)
+    if return_image:
+        return quant
+    self.tk_mod_photo = PIL.ImageTk.PhotoImage(
+        image = PIL.Image.fromarray(quant)
+    )
+    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.tk_mod_photo, anchor=tk.CENTER)

@@ -20,7 +20,9 @@ class App():
         load_local_photo, \
         save_processed_photo, \
         photo_select_button_setup, \
-        photo_save_button_setup
+        photo_save_button_setup, \
+        resize_photo
+
 
     def __init__(self, window, window_title, image_path="img/lena.bmp"):
         self.window = window
@@ -29,7 +31,7 @@ class App():
         
 
         # Get the image dimensions (OpenCV stores image data as NumPy ndarray)
-        self.height, self.width, no_channels = MAXDIM, MAXDIM*2, 0#self.cv_img.shape
+        self.height, self.width = MAXDIM, MAXDIM*2
         
         ''' Image Display Related Code'''
         # Create a FRAME that can fit the images
@@ -79,6 +81,14 @@ class App():
             "gradient": self.setup_gradient_control_widgets,
             "edge": self.setup_canny_control_widgets,
             "quantization": self.setup_quantization_widgets
+        }
+
+        self.effect_operation_funcs_dict = {
+            "blur": self.blur_image,
+            "smooth": self.bilateral_smooth_image,
+            "gradient": self.sobel_edge_detection,
+            "edge": self.canny_edge_detection,
+            "quantization": self.quantization
         }
 
         self.photo_select_button_setup()

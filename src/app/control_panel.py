@@ -158,4 +158,26 @@ def setup_quantization_widgets(self):
     )
     self.scl_n_clusters.place(relx=0.25, rely=0.0, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_n_clusters)
+
+    self.quantization_type = tk.Label(
+        self.frame3, text="Quantization Type", font="Tahoma 16", bg=BG_COLOR, fg='white'
+    )
+    self.quantization_type.place(relx=0.25, rely=0.4, relwidth=0.15, relheight=0.1)
+    self.control_widgets_arr.append(self.quantization_type)
+    self.quantization_type_sel = tk.StringVar()
+    self.quantization_type_sel.set("color")
+    self.quantization_type_color_radiobutton = tk.Radiobutton(
+        self.frame3, text="Color", variable=self.quantization_type_sel, value="color",
+        command=self.quantization, font="Tahoma 16",
+        bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
+    )
+    self.quantization_type_color_radiobutton.place(relx=0.25, rely=0.55, relwidth=0.1)
+    self.control_widgets_arr.append(self.quantization_type_color_radiobutton)
+    self.quantization_type_luminance_radiobutton = tk.Radiobutton(
+        self.frame3, text="Luminance", variable=self.quantization_type_sel, value="luminance",
+        command=self.quantization, font="Tahoma 16",
+        bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
+    )
+    self.quantization_type_luminance_radiobutton.place(relx=0.35, rely=0.55, relwidth=0.1)
+    self.control_widgets_arr.append(self.quantization_type_luminance_radiobutton)
     self.quantization()
