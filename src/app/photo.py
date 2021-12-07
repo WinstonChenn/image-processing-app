@@ -42,44 +42,46 @@ def resize_photo(self, ori_photo):
         resized_photo = ori_photo
     return resized_photo
 
-def setup_photo(self, image_path, reload=False):
-    if not reload:
-        if hasattr(self, "canvas0"):
-            self.canvas0.destroy()
-        if hasattr(self, "canvas1"):
-            self.canvas1.destroy()
-    # Load an image using OpenCV
+def load_photo(self, image_path):
     assert os.path.isfile(image_path), f"Image: {image_path} not found!"
-    self.ori_img = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+    return cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+
+def setup_photo(self, image, setup_mod=True):
+    # Load an image using OpenCV
+    self.ori_img = image
     self.resized_ori_img = self.resize_photo(self.ori_img)
-    self.resized_mod_img = np.zeros(
-        self.resized_ori_img.shape, dtype=np.uint8
-    )
-    self.resized_mod_img_copy = self.resized_mod_img.copy()  # for recursive processing
     self.tk_ori_img = PIL.ImageTk.PhotoImage(
         image=PIL.Image.fromarray(self.resized_ori_img)
     )
-    self.tk_mod_img = PIL.ImageTk.PhotoImage(
-        image=PIL.Image.fromarray(self.resized_mod_img)
-    )
 
-    if not reload:
-        # Create a CANVAS for original image
+    if setup_mod:
+        self.resized_mod_img = np.zeros(
+            self.resized_ori_img.shape, dtype=np.uint8
+        )
+        self.resized_mod_img_copy = self.resized_mod_img.copy()  # for recursive processing
+        self.tk_mod_img = PIL.ImageTk.PhotoImage(
+            image=PIL.Image.fromarray(self.resized_mod_img)
+        )
+
+    # Create a canvas for original image
+    if not hasattr(self, "canvas0"):
         self.canvas0 = tk.Canvas(self.frame1, width=MAXDIM, height=MAXDIM, bg=BG_COLOR)
         self.canvas0.pack(side=tk.LEFT)
-        
-        # Create a CANVAS for changing image
+    
+    # Create a canvas for changing image
+    if not hasattr(self, "canvas1"):
         self.canvas1 = tk.Canvas(self.frame1, width=MAXDIM, height=MAXDIM, bg=BG_COLOR)
         self.canvas1.pack(side=tk.LEFT)
+    
     self.canvas0.create_image(
         MAXDIM//2, MAXDIM//2, image=self.tk_ori_img, anchor=tk.CENTER
     )
-    self.canvas1.create_image(
-        MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
-    )
+    if setup_mod:
+        self.canvas1.create_image(
+            MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
+        )
 
-    if reload:
-        self.dropDownSelCallback()
+    self.imageUpdateCallBack()
 
 def load_local_photo(self):
     file_url = tk.filedialog.askopenfilename(
@@ -88,7 +90,7 @@ def load_local_photo(self):
     )
     if os.path.isfile(file_url):
         self.image_path = file_url
-        self.setup_photo(file_url, reload=True)
+        self.setup_photo(self.load_photo(file_url))
 
 def save_processed_photo(self):
     filename = tk.filedialog.asksaveasfile(

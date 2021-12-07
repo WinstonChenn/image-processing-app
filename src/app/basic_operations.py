@@ -12,10 +12,13 @@ def blur_image(self, k=None, image=None, return_image=False):
     if image is None:
         image = self.resized_ori_img
     self.resized_mod_img = cv2.blur(image, (k, k))
+    self.resized_mod_img_copy = self.resized_mod_img.copy()
+    self.tk_mod_img = PIL.ImageTk.PhotoImage(
+        image = PIL.Image.fromarray(self.resized_mod_img)
+    )
     if return_image:
         return self.resized_mod_img
     else:
-        self.tk_mod_img = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.resized_mod_img))
         self.canvas1.create_image(
             MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
         )
@@ -35,12 +38,13 @@ def bilateral_smooth_image(
         self.resized_mod_img = cv2.bilateralFilter(
             self.resized_mod_img, d, sigma, sigma
         )
+    self.resized_mod_img_copy = self.resized_mod_img.copy()
+    self.tk_mod_img = PIL.ImageTk.PhotoImage(
+        image = PIL.Image.fromarray(self.resized_mod_img)
+    )
     if return_image:
         return self.resized_mod_img
     else:
-        self.tk_mod_img = PIL.ImageTk.PhotoImage(
-            PIL.Image.fromarray(self.resized_mod_img)
-        )
         self.canvas1.create_image(
             MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
         )
@@ -66,10 +70,13 @@ def sobel_edge_detection(
         self.resized_mod_img = cv2.Sobel(
             image, cv2.CV_64F, dx=1, dy=1, ksize=ksize
         )
+    self.resized_mod_img_copy = self.resized_mod_img.copy()
+    self.tk_mod_img = PIL.ImageTk.PhotoImage(
+        image = PIL.Image.fromarray(self.resized_mod_img.astype(np.uint8))
+    )
     if return_image:
         return self.resized_mod_img.astype(np.uint8)
     else:
-        self.tk_mod_img = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(self.resized_mod_img.astype(np.uint8)))
         self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER)
 
 
@@ -91,14 +98,15 @@ def canny_edge_detection(
         image, threshold1=threshould_low, threshold2=threshould_high, 
         apertureSize=ksize
     )
+    self.resized_mod_img_copy = self.resized_mod_img.copy()
+    self.tk_mod_img = PIL.ImageTk.PhotoImage(
+        image = PIL.Image.fromarray(self.resized_mod_img)
+    )
     if return_image:
         return self.resized_mod_img
     else:
-        self.tk_mod_photo = PIL.ImageTk.PhotoImage(
-            image = PIL.Image.fromarray(self.resized_mod_img)
-        )
         self.canvas1.create_image(
-            MAXDIM//2, MAXDIM//2, image=self.tk_mod_photo, anchor=tk.CENTER
+            MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, anchor=tk.CENTER
         )
 
 
@@ -124,9 +132,14 @@ def quantization(
         quant = image
         quant[:, :, 0:1] = clt.cluster_centers_.astype("uint8")[labels].reshape((h, w, 1))
     quant = cv2.cvtColor(quant, cv2.COLOR_LAB2RGB)
-    if return_image:
-        return quant
-    self.tk_mod_photo = PIL.ImageTk.PhotoImage(
-        image = PIL.Image.fromarray(quant)
+    self.resized_mod_img = quant
+    self.resized_mod_img_copy = self.resized_mod_img.copy()
+    self.tk_mod_img = PIL.ImageTk.PhotoImage(
+        image = PIL.Image.fromarray(self.resized_mod_img)
     )
-    self.canvas1.create_image(MAXDIM//2, MAXDIM//2, image=self.tk_mod_photo, anchor=tk.CENTER)
+    if return_image:
+        return self.resized_mod_img
+    self.canvas1.create_image(
+        MAXDIM//2, MAXDIM//2, image=self.tk_mod_img, 
+        anchor=tk.CENTER
+    )

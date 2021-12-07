@@ -5,6 +5,11 @@ from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY
 def clear_widgets(self):
     for widget in self.control_widgets_arr:
         widget.destroy()
+    if hasattr(self, "webCamOnButton"):
+        self.webCamOnButton.destroy()
+    if hasattr(self, "webCamOffButton"):
+        self.webCamOffButton.destroy()
+    self.control_widgets_arr = []
 
 def setup_blur_control_widgets(self):
     """ Create a SCALE that lets the user blur the image"""
@@ -17,7 +22,8 @@ def setup_blur_control_widgets(self):
     self.scl_blur.place(relx=0.25, rely=0.2, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_blur)
 
-    self.blur_image(1)
+    self.web_cam_on_button_setup()
+    self.blur_image()
 
 def setup_bilateral_smooth_control_widegts(self):
     """ Create 3 SCLAEs that controls bilateral smooth's control panel"""
@@ -51,6 +57,7 @@ def setup_bilateral_smooth_control_widegts(self):
     self.scl_recursion_level.place(relx=0.25, rely=0.5, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_recursion_level)
 
+    self.web_cam_on_button_setup()
     self.bilateral_smooth_image()
 
 def setup_gradient_control_widgets(self):
@@ -82,6 +89,8 @@ def setup_gradient_control_widgets(self):
     )
     self.scl_edge_size.place(relx=0.25, rely=0.4, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_edge_size)
+
+    self.web_cam_on_button_setup()
     self.sobel_edge_detection()
 
 
@@ -145,6 +154,8 @@ def setup_canny_control_widgets(self):
     )
     self.ksize7_radiobutton.place(relx=0.45, rely=0.7, relwidth=0.1)
     self.control_widgets_arr.append(self.ksize7_radiobutton)
+
+    self.web_cam_on_button_setup()
     self.canny_edge_detection()
 
 
@@ -180,4 +191,6 @@ def setup_quantization_widgets(self):
     )
     self.quantization_type_luminance_radiobutton.place(relx=0.35, rely=0.55, relwidth=0.1)
     self.control_widgets_arr.append(self.quantization_type_luminance_radiobutton)
+    self.web_cam_on_button_setup()
+
     self.quantization()

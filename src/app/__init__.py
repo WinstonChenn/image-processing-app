@@ -1,5 +1,9 @@
+import pathlib, os
 import tkinter as tk
 import numpy as np
+import cv2
+import PIL.Image
+from PIL import Image, ImageTk
 from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY, DROPDOWN_WIDTH
 
 class App():
@@ -21,44 +25,55 @@ class App():
         save_processed_photo, \
         photo_select_button_setup, \
         photo_save_button_setup, \
-        resize_photo
+        resize_photo, \
+        load_photo
+    from .video import web_cam_on_button_setup, \
+        webCamOnButtonCallback, \
+        web_cam_off_button_setup, \
+        webCamOffButtOffCallback
 
 
-    def __init__(self, window, window_title, image_path="img/lena.bmp"):
+    def __init__(self, window, window_title, default_img="lena.bmp"):
+        curr_dir = pathlib.Path(__file__).parent.resolve()
+        img_dir = os.path.join(curr_dir, "..", "..", "img")
+        image_path = os.path.join(img_dir, default_img)
         self.window = window
         self.window.title(window_title)
         self.image_path = image_path
+        self.video = False # indicate whether processing video or not
         
-
-        # Get the image dimensions (OpenCV stores image data as NumPy ndarray)
-        self.height, self.width = MAXDIM, MAXDIM*2
+        # Variables storing images
+        self.resized_ori_img = None # original image
+        self.resized_mod_img = None # processed image
+        self.resized_mod_img_copy = None # copy of processed image
+        self.tk_ori_img = None # original image for TK display
+        self.tk_mod_img = None # processed image for TK display
         
-        ''' Image Display Related Code'''
-        # Create a FRAME that can fit the images
-        self.frame1 = tk.Frame(self.window, width=self.width, height=self.height, bg='black')
+        # FRAME 1: Image Display
+        self.frame1 = tk.Frame(self.window, width=MAXDIM*2, height=MAXDIM, bg='black')
         self.frame1.pack(fill=tk.BOTH)
-        self.setup_photo(image_path)
+        self.setup_photo(self.load_photo(image_path))
 
-        # Create FRAME for label
-        self.frame2 = tk.Frame(self.window, width=self.width, height=MARGIN*3, bg="white")
+        # FRAME 3: image label
+        self.frame2 = tk.Frame(self.window, width=MAXDIM*2, height=MARGIN*3, bg="white")
         self.frame2.pack(fill=tk.BOTH)
         self.label_canvas_orig = tk.Canvas(
-            self.frame2, width=self.width//2, height=MARGIN*3, bg=LIGHT_GREY
+            self.frame2, width=MAXDIM*2//2, height=MARGIN*3, bg=LIGHT_GREY
         )
         self.label_canvas_orig.pack(side=tk.LEFT)
         self.label_canvas_orig.create_text(
-            self.width//4, MARGIN*1.5, font="Tahoma 20",text="Original Photo", fill="black"
+            MAXDIM*2//4, MARGIN*1.5, font="Tahoma 20",text="Original Photo", fill="black"
         )
         self.label_canvas_mod = tk.Canvas(
-            self.frame2, width=self.width//2, height=MARGIN*3, bg=LIGHT_GREY
+            self.frame2, width=MAXDIM*2//2, height=MARGIN*3, bg=LIGHT_GREY
         )
         self.label_canvas_mod.pack(side=tk.LEFT)
         self.label_canvas_mod.create_text(
-            self.width//4, MARGIN*1.5, font="Tahoma 20", text="Processed Photo", fill="black"
+            MAXDIM*2//4, MARGIN*1.5, font="Tahoma 20", text="Processed Photo", fill="black"
         )
 
-        # Create a FRAME for control panel
-        self.frame3 = tk.Frame(self.window, width=self.width, height=self.height//2, bg=BG_COLOR)
+        # frame 3: process control panel
+        self.frame3 = tk.Frame(self.window, width=MAXDIM*2, height=MAXDIM//2, bg=BG_COLOR)
         self.frame3.pack(side=tk.BOTTOM, fill=tk.BOTH)
 
 # ##############################################################################################
@@ -93,7 +108,7 @@ class App():
 
         self.photo_select_button_setup()
         self.photo_save_button_setup()
-
+        
         self.window.resizable(False, False)
         self.window.mainloop()
         
@@ -101,10 +116,17 @@ class App():
 #################################  CALLBACK FUNCTIONS  #######################################
 ##############################################################################################
     def dropDownSelCallback(self, *args):
-        effect_str = self.dropDownSel.get()
-        if effect_str in self.effect_setup_funcs_dict:
-            self.setup_photo(self.image_path)
-            self.effect_setup_funcs_dict[self.dropDownSel.get()]()
+        if hasattr(self, "dropDownSel"):
+            effect_str = self.dropDownSel.get()
+            if effect_str in self.effect_setup_funcs_dict:
+                self.effect_setup_funcs_dict[effect_str]()
+
+    def imageUpdateCallBack(self, *args):
+        if hasattr(self, "dropDownSel"):
+            effect_str = self.dropDownSel.get()
+            if effect_str in self.effect_operation_funcs_dict:
+                self.effect_operation_funcs_dict[effect_str]()
+
 
     def edgeTypeSelCallback(self, *args):
         self.edge_type_sel_str = self.edge_type_sel.get()
