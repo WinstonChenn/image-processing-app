@@ -15,7 +15,7 @@ def photo_select_button_setup(self):
         fg='black', activeforeground="grey",
     )
     self.photoSelButton.place(
-        relx=0.047, rely=0.25, relwidth=DROPDOWN_WIDTH, relheight=0.11
+        relx=0.047, rely=0.4, relwidth=DROPDOWN_WIDTH, relheight=0.11
     )
 
 def photo_save_button_setup(self):
@@ -26,7 +26,7 @@ def photo_save_button_setup(self):
         fg='black', activeforeground="grey",
     )
     self.photoSaveButton.place(
-        relx=0.047, rely=0.4, relwidth=DROPDOWN_WIDTH, relheight=0.11
+        relx=0.047, rely=0.55, relwidth=DROPDOWN_WIDTH, relheight=0.11
     )
 
 def resize_photo(self, ori_photo):
@@ -83,6 +83,12 @@ def setup_photo(self, image, setup_mod=True):
 
     self.imageUpdateCallBack()
 
+def imageUpdateCallBack(self, *args):
+    if hasattr(self, "effectDropDownSel"):
+        effect_str = self.effectDropDownSel.get()
+        if effect_str in self.effect_operation_funcs_dict:
+            self.effect_operation_funcs_dict[effect_str]()
+
 def load_local_photo(self):
     file_url = tk.filedialog.askopenfilename(
         initialdir = "/", title = "Select file",
@@ -96,7 +102,7 @@ def save_processed_photo(self):
     filename = tk.filedialog.asksaveasfile(
         mode='w', defaultextension=".jpg"
     )
-    image = self.effect_operation_funcs_dict[self.dropDownSel.get()](
+    image = self.effect_operation_funcs_dict[self.effectDropDownSel.get()](
         image=self.ori_img, return_image=True
     )
     pil_image = PIL.Image.fromarray(image)

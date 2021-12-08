@@ -29,10 +29,8 @@ def webCamOnButtonCallback(self):
     self.web_cam_off_button_setup()
     # Disable regular control panel
     for widget in self.control_widgets_arr:
-        try:
-            widget.configure(state="disabled")
-        except:
-            breakpoint()
+        widget.configure(state="disabled")
+    self.disable_main_control_widgets()
         
     def show_frames(setup=True):
         if not self.video and hasattr(self, "canvas0_solve"):
@@ -48,12 +46,11 @@ def webCamOnButtonCallback(self):
 def webCamOffButtOffCallback(self):
     self.video = False
     self.cap.release()
-    # self.canvas0.destroy()
-    # self.canvas1.destroy()
     self.setup_photo(self.load_photo(self.image_path))
     self.webCamOffButton.destroy()
     # enbable regular control panel
     for widget in self.control_widgets_arr:
         widget.configure(state="normal")
+    self.enable_main_control_widgets()
     self.web_cam_on_button_setup()
 

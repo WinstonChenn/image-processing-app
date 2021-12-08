@@ -13,7 +13,8 @@ class App():
         setup_bilateral_smooth_control_widegts, \
         setup_gradient_control_widgets, \
         setup_canny_control_widgets, \
-        setup_quantization_widgets
+        setup_quantization_widgets, \
+        edgeTypeSelCallback
     from .basic_operations import \
         blur_image, \
         bilateral_smooth_image, \
@@ -26,7 +27,8 @@ class App():
         photo_select_button_setup, \
         photo_save_button_setup, \
         resize_photo, \
-        load_photo
+        load_photo, \
+        imageUpdateCallBack
     from .video import web_cam_on_button_setup, \
         webCamOnButtonCallback, \
         web_cam_off_button_setup, \
@@ -35,8 +37,9 @@ class App():
 
     def __init__(self, window, window_title, default_img="lena.bmp"):
         curr_dir = pathlib.Path(__file__).parent.resolve()
-        img_dir = os.path.join(curr_dir, "..", "..", "img")
-        image_path = os.path.join(img_dir, default_img)
+        self.image_dir = os.path.join(curr_dir, "..", "..", "img")
+        self.image_arr = [f for f in os.listdir(self.image_dir)]
+        image_path = os.path.join(self.image_dir, default_img)
         self.window = window
         self.window.title(window_title)
         self.image_path = image_path
@@ -76,20 +79,28 @@ class App():
         self.frame3 = tk.Frame(self.window, width=MAXDIM*2, height=MAXDIM//2, bg=BG_COLOR)
         self.frame3.pack(side=tk.BOTTOM, fill=tk.BOTH)
 
-# ##############################################################################################
-# ################################   PARAMETER TOOLBAR   #######################################
-# ##############################################################################################
-
-        # Dropdown menu for selecting effects
-        self.dropDownSel = tk.StringVar(self.window)
-        self.dropDownSel.set("Select")
-        self.dropDownSel.trace("w", self.dropDownSelCallback)
-        self.dropDown = tk.OptionMenu(
-            self.frame3, self.dropDownSel, *["blur", "smooth", "gradient", "edge", "quantization"]
+        
+        # Dropdown menu for selecting default photos
+        self.photoDropDownSel = tk.StringVar()
+        self.photoDropDownSel.set("Photo Menu")
+        self.photoDropDownSel.trace("w", self.photoDropDownSelCallback)
+        self.photoDropDown = tk.OptionMenu(
+            self.frame3, self.photoDropDownSel, *self.image_arr
         )
-        self.dropDown.config(fg="black", bg=BG_COLOR)
-        self.dropDown.place(relx=0.05, rely=0.1, relwidth=DROPDOWN_WIDTH)
-        self.control_widgets_arr = []
+        self.photoDropDown.config(fg="black", bg=BG_COLOR)
+        self.photoDropDown.place(relx=0.05, rely=0.1, relwidth=DROPDOWN_WIDTH)
+        
+        # Dropdown menu for selecting effects
+        self.effectDropDownSel = tk.StringVar(self.window)
+        self.effectDropDownSel.set("Effect Menu")
+        self.effectDropDownSel.trace("w", self.effectDropDownSelCallback)
+        self.effectDropDown = tk.OptionMenu(
+            self.frame3, self.effectDropDownSel, *["blur", "smooth", "gradient", "edge", "quantization"]
+        )
+        self.effectDropDown.config(fg="black", bg=BG_COLOR)
+        self.effectDropDown.place(relx=0.05, rely=0.25, relwidth=DROPDOWN_WIDTH)
+
+        self.control_widgets_arr = [] # array that stores reference to all the control widgets for each effect
         self.effect_setup_funcs_dict = {
             "blur": self.setup_blur_control_widgets,
             "smooth": self.setup_bilateral_smooth_control_widegts,
@@ -112,23 +123,24 @@ class App():
         self.window.resizable(False, False)
         self.window.mainloop()
         
-##############################################################################################
-#################################  CALLBACK FUNCTIONS  #######################################
-##############################################################################################
-    def dropDownSelCallback(self, *args):
-        if hasattr(self, "dropDownSel"):
-            effect_str = self.dropDownSel.get()
+    def effectDropDownSelCallback(self, *args):
+        if hasattr(self, "effectDropDownSel"):
+            effect_str = self.effectDropDownSel.get()
             if effect_str in self.effect_setup_funcs_dict:
                 self.effect_setup_funcs_dict[effect_str]()
-
-    def imageUpdateCallBack(self, *args):
-        if hasattr(self, "dropDownSel"):
-            effect_str = self.dropDownSel.get()
-            if effect_str in self.effect_operation_funcs_dict:
-                self.effect_operation_funcs_dict[effect_str]()
-
-
-    def edgeTypeSelCallback(self, *args):
-        self.edge_type_sel_str = self.edge_type_sel.get()
-        self.sobel_edge_detection()
         
+    def photoDropDownSelCallback(self, *args):
+        self.image_path = os.path.join(
+            self.image_dir, self.photoDropDownSel.get()
+        )
+        self.setup_photo(self.load_photo(self.image_path))
+
+    def disable_main_control_widgets(self):
+        self.photoDropDown.config(state="disable")
+        self.effectDropDown.config(state="disable")
+        self.photoSelButton.config(state="disable")
+
+    def enable_main_control_widgets(self):
+        self.photoDropDown.config(state="normal")
+        self.effectDropDown.config(state="normal")
+        self.photoSelButton.config(state="normal")

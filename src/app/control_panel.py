@@ -93,6 +93,10 @@ def setup_gradient_control_widgets(self):
     self.web_cam_on_button_setup()
     self.sobel_edge_detection()
 
+def edgeTypeSelCallback(self, *args):
+    self.edge_type_sel_str = self.edge_type_sel.get()
+    self.sobel_edge_detection()
+
 
 def setup_canny_control_widgets(self):
     self.clear_widgets()
@@ -115,7 +119,7 @@ def setup_canny_control_widgets(self):
         command=command_low, length=400, sliderlength=20, label="Low Threshold", font="Tahoma 16",
         troughcolor=BG_COLOR, bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
     )
-    self.scl_edge_threshold_low.place(relx=0.25, rely=0.0, relwidth=0.5, relheight=0.3)
+    self.scl_edge_threshold_low.place(relx=0.25, rely=0.1, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_edge_threshold_low)
 
     self.scl_edge_threshold_high = tk.Scale(
@@ -123,13 +127,13 @@ def setup_canny_control_widgets(self):
         command=command_high, length=400, sliderlength=20, label="High Threshold", font="Tahoma 16",
         troughcolor=BG_COLOR, bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
     )
-    self.scl_edge_threshold_high.place(relx=0.25, rely=0.3, relwidth=0.5, relheight=0.3)
+    self.scl_edge_threshold_high.place(relx=0.25, rely=0.4, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_edge_threshold_high)
 
     self.ksize_label = tk.Label(
         self.frame3, text="Kernel Size", font="Tahoma 16", bg=BG_COLOR, fg='white'
     )
-    self.ksize_label.place(relx=0.25, rely=0.6, relwidth=0.1, relheight=0.1)
+    self.ksize_label.place(relx=0.25, rely=0.7, relwidth=0.1, relheight=0.1)
     self.control_widgets_arr.append(self.ksize_label)
     self.edge_ksize_sel = tk.IntVar()
     self.edge_ksize_sel.set(3)
@@ -138,21 +142,21 @@ def setup_canny_control_widgets(self):
         command=self.canny_edge_detection, font="Tahoma 16",
         bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
     )
-    self.ksize3_radiobutton.place(relx=0.25, rely=0.7, relwidth=0.1)
+    self.ksize3_radiobutton.place(relx=0.25, rely=0.8, relwidth=0.1)
     self.control_widgets_arr.append(self.ksize3_radiobutton)
     self.ksize5_radiobutton = tk.Radiobutton(
         self.frame3, text="5", variable=self.edge_ksize_sel, value=5,
         command=self.canny_edge_detection, font="Tahoma 16",
         bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
     )
-    self.ksize5_radiobutton.place(relx=0.35, rely=0.7, relwidth=0.1)
+    self.ksize5_radiobutton.place(relx=0.35, rely=0.8, relwidth=0.1)
     self.control_widgets_arr.append(self.ksize5_radiobutton)
     self.ksize7_radiobutton = tk.Radiobutton(
         self.frame3, text="7", variable=self.edge_ksize_sel, value=7,
         command=self.canny_edge_detection, font="Tahoma 16",
         bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
     )
-    self.ksize7_radiobutton.place(relx=0.45, rely=0.7, relwidth=0.1)
+    self.ksize7_radiobutton.place(relx=0.45, rely=0.8, relwidth=0.1)
     self.control_widgets_arr.append(self.ksize7_radiobutton)
 
     self.web_cam_on_button_setup()
@@ -167,13 +171,13 @@ def setup_quantization_widgets(self):
         label="Number of Clusters", font="Tahoma 16", troughcolor=BG_COLOR, 
         bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
     )
-    self.scl_n_clusters.place(relx=0.25, rely=0.0, relwidth=0.5, relheight=0.3)
+    self.scl_n_clusters.place(relx=0.25, rely=0.1, relwidth=0.5, relheight=0.3)
     self.control_widgets_arr.append(self.scl_n_clusters)
 
     self.quantization_type = tk.Label(
         self.frame3, text="Quantization Type", font="Tahoma 16", bg=BG_COLOR, fg='white'
     )
-    self.quantization_type.place(relx=0.25, rely=0.4, relwidth=0.15, relheight=0.1)
+    self.quantization_type.place(relx=0.25, rely=0.5, relwidth=0.15, relheight=0.1)
     self.control_widgets_arr.append(self.quantization_type)
     self.quantization_type_sel = tk.StringVar()
     self.quantization_type_sel.set("color")
@@ -182,14 +186,14 @@ def setup_quantization_widgets(self):
         command=self.quantization, font="Tahoma 16",
         bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
     )
-    self.quantization_type_color_radiobutton.place(relx=0.25, rely=0.55, relwidth=0.1)
+    self.quantization_type_color_radiobutton.place(relx=0.25, rely=0.65, relwidth=0.1)
     self.control_widgets_arr.append(self.quantization_type_color_radiobutton)
     self.quantization_type_luminance_radiobutton = tk.Radiobutton(
         self.frame3, text="Luminance", variable=self.quantization_type_sel, value="luminance",
         command=self.quantization, font="Tahoma 16",
         bg=BG_COLOR, fg='white', activebackground=BG_COLOR, activeforeground='white',
     )
-    self.quantization_type_luminance_radiobutton.place(relx=0.35, rely=0.55, relwidth=0.1)
+    self.quantization_type_luminance_radiobutton.place(relx=0.35, rely=0.65, relwidth=0.1)
     self.control_widgets_arr.append(self.quantization_type_luminance_radiobutton)
     self.web_cam_on_button_setup()
 
