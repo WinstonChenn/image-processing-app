@@ -1,9 +1,6 @@
 import pathlib, os
 import tkinter as tk
 import numpy as np
-import cv2
-import PIL.Image
-from PIL import Image, ImageTk
 from .settings import MARGIN, MAXDIM, BG_COLOR, LIGHT_GREY, DROPDOWN_WIDTH
 
 class App():
@@ -35,11 +32,13 @@ class App():
         webCamOffButtOffCallback
 
 
-    def __init__(self, window, window_title, default_img="lena.bmp"):
+    def __init__(self, window, window_title, default_image="lena.bmp"):
         curr_dir = pathlib.Path(__file__).parent.resolve()
         self.image_dir = os.path.join(curr_dir, "..", "..", "img")
         self.image_arr = [f for f in os.listdir(self.image_dir)]
-        image_path = os.path.join(self.image_dir, default_img)
+        assert default_image in self.image_arr, \
+            f"Default image: {default_image} not found in image directory"
+        image_path = os.path.join(self.image_dir, default_image)
         self.window = window
         self.window.title(window_title)
         self.image_path = image_path
