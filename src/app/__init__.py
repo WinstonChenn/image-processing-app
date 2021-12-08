@@ -11,13 +11,15 @@ class App():
         setup_gradient_control_widgets, \
         setup_canny_control_widgets, \
         setup_quantization_widgets, \
-        edgeTypeSelCallback
+        edgeTypeSelCallback, \
+        setup_cartoonization_widget
     from .basic_operations import \
         blur_image, \
         bilateral_smooth_image, \
         sobel_edge_detection, \
         canny_edge_detection, \
-        quantization
+        quantization, \
+        cartoonization 
     from .photo import setup_photo, \
         load_local_photo, \
         save_processed_photo, \
@@ -94,26 +96,30 @@ class App():
         self.effectDropDownSel.set("Effect Menu")
         self.effectDropDownSel.trace("w", self.effectDropDownSelCallback)
         self.effectDropDown = tk.OptionMenu(
-            self.frame3, self.effectDropDownSel, *["blur", "smooth", "gradient", "edge", "quantization"]
+            self.frame3, self.effectDropDownSel, 
+            *["gaussian blur", "bilateral", "sobel gradient", 
+              "canny edge", "quantization", "cartoon"]
         )
         self.effectDropDown.config(fg="black", bg=BG_COLOR)
         self.effectDropDown.place(relx=0.05, rely=0.25, relwidth=DROPDOWN_WIDTH)
 
         self.control_widgets_arr = [] # array that stores reference to all the control widgets for each effect
         self.effect_setup_funcs_dict = {
-            "blur": self.setup_blur_control_widgets,
-            "smooth": self.setup_bilateral_smooth_control_widegts,
-            "gradient": self.setup_gradient_control_widgets,
-            "edge": self.setup_canny_control_widgets,
-            "quantization": self.setup_quantization_widgets
+            "gaussian blur": self.setup_blur_control_widgets,
+            "bilateral": self.setup_bilateral_smooth_control_widegts,
+            "sobel gradient": self.setup_gradient_control_widgets,
+            "canny edge": self.setup_canny_control_widgets,
+            "quantization": self.setup_quantization_widgets,
+            "cartoon": self.setup_cartoonization_widget
         }
 
         self.effect_operation_funcs_dict = {
-            "blur": self.blur_image,
-            "smooth": self.bilateral_smooth_image,
-            "gradient": self.sobel_edge_detection,
-            "edge": self.canny_edge_detection,
-            "quantization": self.quantization
+            "gaussian blur": self.blur_image,
+            "bilateral": self.bilateral_smooth_image,
+            "sobel gradient": self.sobel_edge_detection,
+            "canny edge": self.canny_edge_detection,
+            "quantization": self.quantization, 
+            "cartoon": self.cartoonization
         }
 
         self.photo_select_button_setup()

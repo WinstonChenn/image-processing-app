@@ -79,6 +79,7 @@ def setup_gradient_control_widgets(self):
         if not n % 2:
             self.scl_edge_size.set(n+1 if n > self._past else n-1)
             self._past = self.scl_edge_size.get()
+
     def command(n):
         odd_fix(n)
         self.sobel_edge_detection()
@@ -195,6 +196,64 @@ def setup_quantization_widgets(self):
     )
     self.quantization_type_luminance_radiobutton.place(relx=0.35, rely=0.65, relwidth=0.1)
     self.control_widgets_arr.append(self.quantization_type_luminance_radiobutton)
+
     self.web_cam_on_button_setup()
 
     self.quantization()
+
+def setup_cartoonization_widget(self):
+    self.clear_widgets()
+    self.scl_n_clusters = tk.Scale(
+        self.frame3, from_=2, to=25, orient=tk.HORIZONTAL, showvalue=2,
+        command=self.cartoonization, length=400, sliderlength=20,
+        label="Colofulness", font="Tahoma 16", troughcolor=BG_COLOR,
+        bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
+    )
+    self.scl_n_clusters.place(relx=0.25, rely=0.05, relwidth=0.5, relheight=0.3)
+    self.control_widgets_arr.append(self.scl_n_clusters)
+
+    def odd_fix(n):
+        if not hasattr(self, "_past_odd"):
+            self._past_odd = 0
+        n = int(n)
+        if not n % 2:
+            self.scl_base_sigma.set(n+1 if n > self._past_odd else n-1)
+            self._past_odd = self.scl_base_sigma.get()
+
+    def odd_command(n):
+        odd_fix(n)
+        self.cartoonization()
+
+    def even_fix(n):
+        if not hasattr(self, "_past_even"):
+            self._past_even = 0
+        n = int(n)
+        if n % 2:
+            self.scl_sigma_step.set(n+1 if n > self._past_even else n-1)
+            self._past_even = self.scl_sigma_step.get()
+    
+    def even_command(n):
+        even_fix(n)
+        self.cartoonization()
+
+    self.scl_base_sigma = tk.Scale(
+        self.frame3, from_=3, to=51, orient=tk.HORIZONTAL, showvalue=2,
+        command=odd_command, length=400, sliderlength=20,
+        label="Blurriness", font="Tahoma 16", troughcolor=BG_COLOR,
+        bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
+    )
+    self.scl_base_sigma.place(relx=0.25, rely=0.35, relwidth=0.5, relheight=0.3)
+    self.control_widgets_arr.append(self.scl_base_sigma)
+
+    self.scl_sigma_step = tk.Scale(
+        self.frame3, from_=2, to=50, orient=tk.HORIZONTAL, showvalue=2,
+        command=even_command, length=400, sliderlength=20,
+        label="Paint Brush Thickness", font="Tahoma 16", troughcolor=BG_COLOR,
+        bg=BG_COLOR, fg='white', trough=LIGHT_GREY, highlightthickness=0,
+    )
+    self.scl_sigma_step.place(relx=0.25, rely=0.65, relwidth=0.5, relheight=0.3)
+    self.control_widgets_arr.append(self.scl_sigma_step)
+
+    self.web_cam_on_button_setup()
+    self.cartoonization()
+
