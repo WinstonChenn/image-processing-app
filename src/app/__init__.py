@@ -13,7 +13,7 @@ class App():
         setup_quantization_widgets, \
         edgeTypeSelCallback, \
         setup_cartoonization_widget
-    from .basic_operations import \
+    from .filter_operations import \
         blur_image, \
         bilateral_smooth_image, \
         sobel_edge_detection, \
