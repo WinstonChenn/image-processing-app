@@ -25,6 +25,10 @@ python src/main.py
 
 ## Implementation Details
 - Graphic User Interface (GUI)
+The GUI of this image process app is entirely built with Python and Tkinter. The GUI can be roughly separated into three sections. 
+1) The display section
+2) Primary control panel
+3) Secondary control panel
 - Image Processing Effects
 
 ## Results Discussion
