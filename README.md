@@ -43,9 +43,15 @@ Additionally, I also provides the "Web Cam On" button that allows user to apply 
 Currently 6 image processing effects are implemented. 5 of them are classical image processing filters and 1 one them is a composite image filter that generates cartoon effect. The Python codes for implementing these filters are located in `src/app/filter_operations.py`
 1. Classical image filters <br/>
 Currently I implemented the following classical image filters: gaussian blur, bilateral filter, sobel gradient fiter, canny edge detection filter, quantization filter. The core algorithms of each filter are implemented by OpenCV and most of the scripts in `src/app/filter_operations.py` invovles connecting OpenCV's filter API with GUI's parameter control widgets.
-2. Cartoon effect filter
-
-
+2. Cartoon effect filter <br/>
+The cartoon effect filter is a composite filter composed of bilateral filter, luminance qunatization filter, difference of gaussian(DoG) edge detection filter. The detail of how to combining these filters is summarized in the instruction below:
+    1. Applying recursive bilateral filters to generate smoothed images
+    2. Applying luminance quantization on smoothed images to generate quantized images
+    3. Applying DoG edge detection filter on smoothed images to generate edge images
+    3. Negate the edge images
+        - the edges will have dark values in the negated image (to simulate trace).
+    4. Combining qunatized image with negated edges using "Min" function
+        - Min function preserves the edge pixels, which tend to have near 0 values.
 ## Results Discussion
 
 ## Learning Results & Feature Work
