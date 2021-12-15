@@ -31,8 +31,7 @@ The display section is located in top part of the image processing app GUI. It i
 ![display example](https://raw.githubusercontent.com/WinstonChenn/image-processing-app/main/README_images/display.png?token=AL6M65FWMPPTR6JR2DBZB63BYFW6Q)
 
 2. Primary control panel <br/>
-THe primary control panel locates at the lower left corner of the GUI. It is designed to provide users with high-level image processing app functionalities, such as selecting different photos, choosing different image processing effects, and saving processed photos. 
- <br/>
+THe primary control panel locates at the lower left corner of the GUI. It is designed to provide users with high-level image processing app functionalities, such as selecting different photos, choosing different image processing effects, and saving processed photos. <br/>
 ![primary control example](https://raw.githubusercontent.com/WinstonChenn/image-processing-app/main/README_images/primary_control.png?token=AL6M65A77ZJ6GVT7UEYSBCLBYFXG6)
 3. Secondary control panel <br/>
 The secondary control panel locates at the lower right corner of the GUI. It provides functionalities specific to the image processing effects that users selected from the primary control panel. This panel provides various wigets that allows user to manipulate the parameters of the image processing filter that they are applying. Therefore different image processing effects will result in different wigets layout. <br/>
