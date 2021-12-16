@@ -170,12 +170,12 @@ def cartoonization(
     
     # Luminance Quantization
     clt = MiniBatchKMeans(n_clusters = n_clusters)
-    smoothed_lab = cv2.cvtColor(smoothed, cv2.COLOR_RGB2LAB)
-    (h, w) = smoothed_lab.shape[:2]
-    labels = clt.fit_predict(smoothed_lab[:,:,0].reshape((w * h, 1)))
-    quant = smoothed_lab
-    quant[:, :, 0:1] = clt.cluster_centers_.astype("uint8")[labels].reshape((h, w, 1))
-    quant = cv2.cvtColor(quant, cv2.COLOR_LAB2RGB)
+    smoothed_cpy = smoothed.copy()
+    (h, w) = smoothed_cpy.shape[:2]
+    labels = clt.fit_predict(smoothed_cpy[:,:,:].reshape((w * h, 3)))
+    quant = smoothed_cpy
+    quant[:, :, :] = clt.cluster_centers_.astype("uint8")[labels].reshape((h, w, 3))
+    # quant = cv2.cvtColor(quant, cv2.COLOR_LAB2RGB)
 
     # DoG Edge Detection
     low_sigma_img = cv2.GaussianBlur(smoothed,[sigma_base]*2,0)
